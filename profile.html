@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile - CarbonWise</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/profile.js" defer></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <h2>CarbonWise Profile</h2>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="history.html">History</a>
+      <a href="goals.html">Goals</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </header>
+
+  <h1 class="center">👤 User Profile</h1>
+
+  <div class="container">
+    <div class="card">
+      <h3 id="username">Username: Guest</h3>
+      <p id="role">Role: User</p>
+      <p id="score">Green Score: 0</p>
+      <p id="emission">Last Total Emission: 0 kg CO2</p>
+      <div class="breakdown" id="breakdown">
+        <!-- Latest breakdown will appear here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    protectPage("user");
+  </script>
+
+</body>
+</html>

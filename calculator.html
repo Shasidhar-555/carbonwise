@@ -1,101 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<title>CarbonWise Calculator</title>
-
-<link rel="stylesheet" href="css/styles.css">
-
+  <meta charset="UTF-8">
+  <title>CarbonWise Calculator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/calculator.js" defer></script>
 </head>
-
 <body>
 
-<h1 class="center">🌍 CarbonWise Footprint Calculator</h1>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <h2>CarbonWise Calculator</h2>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="history.html">History</a>
+      <a href="goals.html">Goals</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </header>
 
-<div class="calculator">
+  <h1 class="center">🌍 Carbon Footprint Calculator</h1>
 
-<div class="card">
+  <div class="container calculator">
 
-<h2>⚡ Electricity</h2>
-<input type="number" id="electricity" placeholder="Electricity usage (kWh)" min="0">
+    <!-- Home Energy -->
+    <div class="card">
+      <h2>⚡ Home Energy</h2>
+      <input type="number" id="electricity" placeholder="Electricity (kWh)" min="0">
+      <input type="number" id="ac" placeholder="AC usage hours/week" min="0">
+      <input type="number" id="gas" placeholder="Gas usage (cylinder/week)" min="0">
+    </div>
 
-</div>
+    <!-- Transportation -->
+    <div class="card">
+      <h2>🚗 Transportation</h2>
+      <input type="number" id="car" placeholder="Car km/week" min="0">
+      <input type="number" id="bus" placeholder="Bus km/week" min="0">
+      <input type="number" id="train" placeholder="Train km/week" min="0">
+      <input type="number" id="plane" placeholder="Flight km/month" min="0">
+      <input type="number" id="bike" placeholder="Bike km/week" min="0">
+    </div>
 
+    <!-- Food & Diet -->
+    <div class="card">
+      <h2>🍽 Food & Diet</h2>
+      <input type="number" id="meat" placeholder="Meat meals/week" min="0">
+      <input type="number" id="dairy" placeholder="Dairy servings/week" min="0">
+      <input type="number" id="veg" placeholder="Vegetarian meals/week" min="0">
+    </div>
 
-<div class="card">
+    <!-- Waste -->
+    <div class="card">
+      <h2>🗑 Waste</h2>
+      <input type="number" id="waste" placeholder="Waste (kg/week)" min="0">
+      <input type="number" id="plastic" placeholder="Plastic usage items/week" min="0">
+      <input type="number" id="recycling" placeholder="Recycling % (0-100)" min="0" max="100">
+    </div>
 
-<h2>🚗 Transport</h2>
+    <!-- Water -->
+    <div class="card">
+      <h2>💧 Water</h2>
+      <input type="number" id="water" placeholder="Water (litres/day)" min="0">
+      <input type="number" id="laundry" placeholder="Laundry loads/week" min="0">
+      <input type="number" id="shower" placeholder="Shower duration (min/day)" min="0">
+    </div>
 
-<input type="number" id="car" placeholder="Car km" min="0">
+    <!-- Buttons -->
+    <div class="buttons">
+      <button onclick="calculateCarbon()">Calculate</button>
+      <button onclick="resetForm()">Reset</button>
+      <a href="dashboard.html"><button>View Dashboard</button></a>
+    </div>
 
-<input type="number" id="bus" placeholder="Bus km" min="0">
+    <h3 id="result"></h3>
+    <h3 id="score"></h3>
+    <h3 id="level"></h3>
+    <div class="breakdown" id="breakdown"></div>
+    <h3 id="yearly"></h3>
+    <p id="tip"></p>
 
-<input type="number" id="train" placeholder="Train km" min="0">
-
-<input type="number" id="bike" placeholder="Bike km" min="0">
-
-<input type="number" id="plane" placeholder="Plane km" min="0">
-
-</div>
-
-
-<div class="card">
-
-<h2>🍽 Food</h2>
-
-<input type="number" id="meat" placeholder="Meat meals per week" min="0">
-
-</div>
-
-
-<div class="card">
-
-<h2>🗑 Waste</h2>
-
-<input type="number" id="waste" placeholder="Waste produced (kg)" min="0">
-
-</div>
-
-
-<div class="card">
-
-<h2>💧 Water</h2>
-
-<input type="number" id="water" placeholder="Water usage (litres)" min="0">
-
-</div>
-
-
-<div class="buttons">
-
-<button onclick="calculateCarbon()">Calculate</button>
-
-<button onclick="resetForm()">Reset</button>
-
-<a href="dashboard.html">
-<button>View Dashboard</button>
-</a>
-
-</div>
-
-
-<h3 id="result"></h3>
-
-<h3 id="score"></h3>
-
-<h3 id="level"></h3>
-
-<div class="breakdown" id="breakdown"></div>
-
-<h3 id="yearly"></h3>
-
-<p id="tip"></p>
-
-</div>
-
-<script src="js/calculator.js"></script>
+  </div>
 
 </body>
 </html>

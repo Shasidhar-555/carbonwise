@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Carbon Goals - CarbonWise</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/goals.js" defer></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <h2>CarbonWise Goals</h2>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="history.html">History</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </header>
+
+  <h1 class="center">🎯 Set Your Carbon Reduction Goals</h1>
+
+  <div class="container">
+    <div class="card">
+      <input type="number" id="goalInput" placeholder="Enter monthly CO2 target (kg)">
+      <button onclick="saveGoal()">Save Goal</button>
+      <h3 id="goalDisplay"></h3>
+      <progress id="goalProgress" value="0" max="100" style="width:100%; height:20px;"></progress>
+    </div>
+  </div>
+
+  <script>
+    protectPage("user");
+  </script>
+
+</body>
+</html>

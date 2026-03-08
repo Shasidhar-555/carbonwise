@@ -1,58 +1,57 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<title>Dashboard</title>
-
-<link rel="stylesheet" href="css/styles.css">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <meta charset="UTF-8">
+  <title>CarbonWise Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/charts.js" defer></script>
+  <script src="js/auth.js" defer></script>
 </head>
-
 <body>
 
-<header class="navbar">
-<h2>CarbonWise Dashboard</h2>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <h2>CarbonWise Dashboard</h2>
+    <nav>
+      <a href="calculator.html">Calculator</a>
+      <a href="history.html">History</a>
+      <a href="goals.html">Goals</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </header>
 
-<nav>
-<a href="calculator.html">Calculator</a>
-<a href="goals.html">Goals</a>
-<a href="profile.html">Profile</a>
-</nav>
+  <h1 class="center">📊 Dashboard Overview</h1>
 
-</header>
+  <div class="dashboard container">
+    <div class="card">
+      <h3>Total Carbon Emission</h3>
+      <p id="totalEmission">0 kg CO2</p>
+    </div>
+    <div class="card">
+      <h3>Green Score</h3>
+      <p id="greenScore">0</p>
+    </div>
+  </div>
 
-<div class="dashboard">
+  <!-- Category Breakdown Chart -->
+  <div class="chart-container container">
+    <div class="card">
+      <canvas id="categoryBreakdownChart" style="max-width:100%;"></canvas>
+    </div>
+  </div>
 
-<div class="card">
+  <!-- Trend Chart -->
+  <div class="chart-container container">
+    <div class="card">
+      <canvas id="trendChart" style="max-width:100%; margin-top:20px;"></canvas>
+    </div>
+  </div>
 
-<h3>Total Carbon Emission</h3>
-
-<p id="totalEmission">0 kg CO2</p>
-
-</div>
-
-<div class="card">
-
-<h3>Green Score</h3>
-
-<p id="greenScore">0</p>
-
-</div>
-
-</div>
-
-
-<div class="chart-container">
-
-<canvas id="emissionChart"></canvas>
-
-</div>
-
-<script src="js/charts.js"></script>
+  <script>
+    protectPage("user"); // Ensure only logged-in users can access
+  </script>
 
 </body>
-
 </html>

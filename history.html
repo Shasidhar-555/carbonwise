@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emission History - CarbonWise</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/history.js" defer></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <h2>CarbonWise History</h2>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="goals.html">Goals</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </header>
+
+  <h1 class="center">📊 Emission History</h1>
+
+  <div class="container">
+    <div class="card">
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Total Emission (kg CO2)</th>
+            <th>Green Score</th>
+            <th>Breakdown</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Filled dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    protectPage("user");
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emission Analytics - CarbonWise</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <h1 class="center">📈 Emission Analytics</h1>
+
+  <div class="container">
+    <div class="card">
+      <canvas id="chart" width="600" height="300"></canvas>
+    </div>
+  </div>
+
+  <script>
+    let history = JSON.parse(localStorage.getItem("history")) || [];
+
+    let labels = history.map(h => h.date);
+    let data = history.map(h => h.emission);
+
+    new Chart(document.getElementById("chart"), {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "CO2 Emission",
+          data: data,
+          borderColor: "#00ffff",
+          backgroundColor: "rgba(0,255,255,0.1)",
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: {
+              color: "#00ffff"
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#00ffff" },
+            grid: { color: "#222" }
+          },
+          y: {
+            ticks: { color: "#00ffff" },
+            grid: { color: "#222" }
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

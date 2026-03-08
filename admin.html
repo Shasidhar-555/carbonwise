@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - CarbonWise</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="js/admin.js" defer></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <h2>CarbonWise Admin Panel</h2>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="history.html">History</a>
+      <a href="goals.html">Goals</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </header>
+
+  <h1 class="center">📊 Admin Analytics</h1>
+
+  <div class="container">
+
+    <div class="card">
+      <h3>Total Users</h3>
+      <p id="totalUsers">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Average Emission</h3>
+      <p id="averageEmission">0 kg CO2</p>
+    </div>
+
+    <div class="card">
+      <h3>Leaderboard</h3>
+      <table id="adminLeaderboard">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>User</th>
+            <th>Green Score</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Category Breakdown</h3>
+      <canvas id="categoryChart" width="400" height="200"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Emission Trend</h3>
+      <canvas id="trendChart" width="400" height="200"></canvas>
+    </div>
+
+  </div>
+
+</body>
+</html>
