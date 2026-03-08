@@ -1,13 +1,101 @@
-<h2>Carbon Calculator</h2>
+<!DOCTYPE html>
+<html lang="en">
 
-<input id="electricity" placeholder="Electricity usage">
+<head>
 
-<input id="car" placeholder="Car travel">
+<meta charset="UTF-8">
+<title>CarbonWise Calculator</title>
 
-<input id="meat" placeholder="Meat meals">
+<link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+
+<h1 class="center">🌍 CarbonWise Footprint Calculator</h1>
+
+<div class="calculator">
+
+<div class="card">
+
+<h2>⚡ Electricity</h2>
+<input type="number" id="electricity" placeholder="Electricity usage (kWh)" min="0">
+
+</div>
+
+
+<div class="card">
+
+<h2>🚗 Transport</h2>
+
+<input type="number" id="car" placeholder="Car km" min="0">
+
+<input type="number" id="bus" placeholder="Bus km" min="0">
+
+<input type="number" id="train" placeholder="Train km" min="0">
+
+<input type="number" id="bike" placeholder="Bike km" min="0">
+
+<input type="number" id="plane" placeholder="Plane km" min="0">
+
+</div>
+
+
+<div class="card">
+
+<h2>🍽 Food</h2>
+
+<input type="number" id="meat" placeholder="Meat meals per week" min="0">
+
+</div>
+
+
+<div class="card">
+
+<h2>🗑 Waste</h2>
+
+<input type="number" id="waste" placeholder="Waste produced (kg)" min="0">
+
+</div>
+
+
+<div class="card">
+
+<h2>💧 Water</h2>
+
+<input type="number" id="water" placeholder="Water usage (litres)" min="0">
+
+</div>
+
+
+<div class="buttons">
 
 <button onclick="calculateCarbon()">Calculate</button>
 
-<p id="result"></p>
+<button onclick="resetForm()">Reset</button>
+
+<a href="dashboard.html">
+<button>View Dashboard</button>
+</a>
+
+</div>
+
+
+<h3 id="result"></h3>
+
+<h3 id="score"></h3>
+
+<h3 id="level"></h3>
+
+<div class="breakdown" id="breakdown"></div>
+
+<h3 id="yearly"></h3>
+
+<p id="tip"></p>
+
+</div>
 
 <script src="js/calculator.js"></script>
+
+</body>
+</html>
