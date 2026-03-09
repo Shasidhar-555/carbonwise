@@ -1,6 +1,9 @@
 // Protect page
 protectPage("user");
 
+// Global chart variable
+let emissionChart;
+
 // CO2 emission factors (example values)
 const factors = {
     electricity: 0.233, // kg CO2 per kWh
@@ -69,8 +72,25 @@ function calculateCarbon(){
     // Yearly estimate
     let yearly = totalEmission * 52; // per year
 
-    // Tips
-    let tip = "Tip: Reduce high-emission categories like transport and energy.";
+    // Dynamic Tips
+    let categories = [
+        {name: 'Energy', value: b.energy},
+        {name: 'Transport', value: b.transport},
+        {name: 'Food', value: b.food},
+        {name: 'Waste', value: b.waste},
+        {name: 'Water', value: b.water}
+    ];
+    categories.sort((a, b) => b.value - a.value);
+    let topCategories = categories.slice(0, 2);
+    let tips = {
+        'Energy': 'Switch to LED bulbs, unplug electronics when not in use, and use a programmable thermostat to reduce heating/cooling. For bigger impact, install solar panels or switch to a green energy provider. Track your usage with smart meters to identify high-consumption periods.',
+        'Transport': 'Walk, bike, or use public transit for short trips. Carpool or use ride-sharing services. If driving, maintain proper tire pressure and combine errands. Consider an electric or hybrid vehicle for long-term savings. Calculate your carbon footprint from flights and offset if necessary.',
+        'Food': 'Reduce meat and dairy intake by incorporating more plant-based meals like beans, lentils, and vegetables. Buy local and seasonal produce to cut transportation emissions. Compost food waste and avoid processed foods with excessive packaging. Try meal planning to minimize food waste.',
+        'Waste': 'Recycle all paper, plastics, glass, and metals. Compost organic waste instead of sending it to landfills. Choose products with minimal or recyclable packaging. Repair items instead of buying new, and donate or sell unused goods. Participate in community clean-ups.',
+        'Water': 'Install low-flow showerheads and faucets. Fix leaky taps immediately. Take shorter showers and turn off the tap while brushing teeth. Use a dishwasher instead of hand-washing when possible. Collect rainwater for outdoor use and install greywater systems for irrigation.'
+    };
+    let tipText = topCategories.map(cat => `For ${cat.name}: ${tips[cat.name]}`).join(' ');
+    let tip = `Top Tips: ${tipText}`;
 
     // Display results
     document.getElementById("result").innerText = `Total Emission: ${totalEmission.toFixed(2)} kg CO2`;
@@ -84,6 +104,41 @@ function calculateCarbon(){
         `🗑 Waste: ${b.waste.toFixed(2)} kg CO2\n`+
         `💧 Water: ${b.water.toFixed(2)} kg CO2`;
     document.getElementById("tip").innerText = tip;
+
+    // Create Doughnut Chart
+    if (emissionChart) {
+        emissionChart.destroy();
+    }
+    const ctx = document.getElementById('emissionChart').getContext('2d');
+    emissionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['⚡ Energy', '🚗 Transport', '🍽 Food', '🗑 Waste', '💧 Water'],
+            datasets: [{
+                data: [b.energy, b.transport, b.food, b.waste, b.water],
+                backgroundColor: [
+                    '#00ffff', // cyan
+                    '#ffa500', // orange
+                    '#ff4500', // red-orange
+                    '#32cd32', // lime green
+                    '#1e90ff'  // dodger blue
+                ],
+                borderColor: '#161b22',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#fff'
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Reset form
@@ -95,4 +150,8 @@ function resetForm(){
     document.getElementById("yearly").innerText = "";
     document.getElementById("breakdown").innerText = "";
     document.getElementById("tip").innerText = "";
+    if (emissionChart) {
+        emissionChart.destroy();
+        emissionChart = null;
+    }
 }
