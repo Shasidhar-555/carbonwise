@@ -18,7 +18,6 @@ const factors = {
     dairy: 1.2,
     veg: 0.5,
     waste: 0.3,         // per kg
-    plastic: 0.2,       // per item
     water: 0.001,       // per litre
     laundry: 0.5,       // per load
     shower: 0.05        // per minute
@@ -28,9 +27,14 @@ const factors = {
 function calculateCarbon(){
     let b = {}; // breakdown
 
-    b.energy = (Number(document.getElementById("electricity").value) || 0) * factors.electricity
-             + (Number(document.getElementById("ac").value) || 0) * factors.ac
-             + (Number(document.getElementById("gas").value) || 0) * factors.gas;
+    const electricity = Number(document.getElementById("electricity").value) || 0;
+    const ac = Number(document.getElementById("ac").value) || 0;
+    const gasYear = Number(document.getElementById("gas").value) || 0;
+    const gasWeekly = gasYear / 52;
+
+    b.energy = electricity * factors.electricity
+             + ac * factors.ac
+             + gasWeekly * factors.gas;
 
     b.transport = (Number(document.getElementById("car").value) || 0) * factors.car
                 + (Number(document.getElementById("bus").value) || 0) * factors.bus
@@ -42,9 +46,7 @@ function calculateCarbon(){
            + (Number(document.getElementById("dairy").value) || 0) * factors.dairy
            + (Number(document.getElementById("veg").value) || 0) * factors.veg;
 
-    let recyclingFactor = (Number(document.getElementById("recycling").value) || 0) / 100;
-    b.waste = ((Number(document.getElementById("waste").value) || 0) * factors.waste
-             + (Number(document.getElementById("plastic").value) || 0) * factors.plastic) * (1 - recyclingFactor);
+    b.waste = (Number(document.getElementById("waste").value) || 0) * factors.waste;
 
     b.water = (Number(document.getElementById("water").value) || 0) * factors.water
             + (Number(document.getElementById("laundry").value) || 0) * factors.laundry
@@ -52,16 +54,22 @@ function calculateCarbon(){
 
     let totalEmission = b.energy + b.transport + b.food + b.waste + b.water;
 
+    // Green Score
+    let score = Math.max(0, 100 - totalEmission);
+
     // Save history
     let history = JSON.parse(localStorage.getItem("history")) || [];
     let now = new Date();
-    history.push({date: now.toLocaleDateString(), emission: totalEmission, breakdown: b});
+    history.push({
+        date: now.toLocaleDateString(),
+        emission: totalEmission,
+        total: totalEmission,
+        score: score,
+        breakdown: b
+    });
     localStorage.setItem("history", JSON.stringify(history));
     localStorage.setItem("totalEmission", totalEmission);
     localStorage.setItem("latestBreakdown", JSON.stringify(b));
-
-    // Green Score
-    let score = Math.max(0, 100 - totalEmission);
 
     // Level
     let level = score > 80 ? "🌱 Eco Hero"
@@ -89,8 +97,8 @@ function calculateCarbon(){
         'Waste': 'Recycle all paper, plastics, glass, and metals. Compost organic waste instead of sending it to landfills. Choose products with minimal or recyclable packaging. Repair items instead of buying new, and donate or sell unused goods. Participate in community clean-ups.',
         'Water': 'Install low-flow showerheads and faucets. Fix leaky taps immediately. Take shorter showers and turn off the tap while brushing teeth. Use a dishwasher instead of hand-washing when possible. Collect rainwater for outdoor use and install greywater systems for irrigation.'
     };
-    let tipText = topCategories.map(cat => `For ${cat.name}: ${tips[cat.name]}`).join(' ');
-    let tip = `Top Tips: ${tipText}`;
+    let tipText = topCategories.map(cat => `<li><strong>${cat.name}:</strong> ${tips[cat.name]}</li>`).join('');
+    let tip = `<h4>AI Advice:</h4><ul>${tipText}</ul>`;
 
     // Display results
     document.getElementById("result").innerText = `Total Emission: ${totalEmission.toFixed(2)} kg CO2`;
@@ -103,25 +111,30 @@ function calculateCarbon(){
         `🍽 Food: ${b.food.toFixed(2)} kg CO2\n`+
         `🗑 Waste: ${b.waste.toFixed(2)} kg CO2\n`+
         `💧 Water: ${b.water.toFixed(2)} kg CO2`;
-    document.getElementById("tip").innerText = tip;
+    document.getElementById("tip").innerHTML = tip;
 
     // Create Doughnut Chart
     if (emissionChart) {
         emissionChart.destroy();
     }
     const ctx = document.getElementById('emissionChart').getContext('2d');
+    const categoryData = [b.energy, b.transport, b.food, b.waste, b.water];
+    const anyNonZero = categoryData.some(value => value > 0);
+    const chartData = anyNonZero
+        ? categoryData.map(value => value === 0 ? 0.0001 : value)
+        : [1, 1, 1, 1, 1]; // show all categories evenly when no inputs set
     emissionChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: ['⚡ Energy', '🚗 Transport', '🍽 Food', '🗑 Waste', '💧 Water'],
             datasets: [{
-                data: [b.energy, b.transport, b.food, b.waste, b.water],
+                data: chartData,
                 backgroundColor: [
-                    '#00ffff', // cyan
-                    '#ffa500', // orange
-                    '#ff4500', // red-orange
-                    '#32cd32', // lime green
-                    '#1e90ff'  // dodger blue
+                    '#FF6384', // red
+                    '#36A2EB', // blue
+                    '#FFCE56', // yellow
+                    '#4BC0C0', // teal
+                    '#9966FF'  // purple
                 ],
                 borderColor: '#161b22',
                 borderWidth: 2
@@ -155,3 +168,29 @@ function resetForm(){
         emissionChart = null;
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const calcBtn = document.getElementById("calculateBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const viewDashBtn = document.getElementById("viewDashboardBtn");
+
+    if (calcBtn) {
+        calcBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            calculateCarbon();
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetForm();
+        });
+    }
+
+    if (viewDashBtn) {
+        viewDashBtn.addEventListener("click", () => {
+            window.location.href = "dashboard.html";
+        });
+    }
+});

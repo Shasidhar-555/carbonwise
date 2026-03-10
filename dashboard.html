@@ -33,6 +33,51 @@
       <h3>Green Score</h3>
       <p id="greenScore">0</p>
     </div>
+    <div class="card">
+      <h3>Monthly Carbon Emission</h3>
+      <p id="monthlyEmission">0 kg CO2</p>
+    </div>
+    <div class="card">
+      <h3>Goal Progress</h3>
+      <p id="goalText">No goal set</p>
+      <progress id="goalProgress" value="0" max="100"></progress>
+    </div>
+  </div>
+
+  <!-- AI Advice & Leaderboard & Recent Activity -->
+  <div class="dashboard container" style="flex-wrap:wrap;gap:20px;">
+    <div class="card" style="flex: 1 1 280px;">
+      <h3>AI Sustainability Advice</h3>
+      <ul id="aiAdvice">
+        <li>Reduce electricity usage</li>
+        <li>Use public transport</li>
+        <li>Reduce meat consumption</li>
+        <li>Increase recycling</li>
+      </ul>
+    </div>
+    <div class="card" style="flex: 1 1 280px;">
+      <h3>Carbon Impact Insights</h3>
+      <ul id="impactInsights">
+        <li id="treesOffset">Calculating tree offset...</li>
+        <li id="globalAverage">Comparing with global average...</li>
+        <li id="yearlyFootprint">Estimating yearly footprint...</li>
+      </ul>
+    </div>
+    <div class="card" style="flex: 1 1 640px;">
+      <h3>Recent Activity</h3>
+      <table id="recentActivity" style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Emission (kg CO2)</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="3" style="text-align:center;">No activity yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Category Breakdown Chart -->
