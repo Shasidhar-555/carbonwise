@@ -232,9 +232,10 @@ h1, h2, h3 {
 }
 
 .score-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; }
-.score-good { background: #1f7; color: #083; }
-.score-mid { background: #fd7; color: #5a3; }
-.score-low { background: #f97; color: #700; }
+.score-good { background: linear-gradient(135deg,#239f52,#00d76a); color: #042; }
+.score-mid { background: linear-gradient(135deg,#edae22,#ffc000); color: #4a3100; }
+.score-low { background: linear-gradient(135deg,#f3423d,#ff8f7c); color: #5c0000; }
+.score-neutral { background: linear-gradient(135deg,#55575a,#31363d); color: #ddd; }
 
 .toast-container {
   position: fixed;

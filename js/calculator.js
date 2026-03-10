@@ -23,61 +23,6 @@ const factors = {
     shower: 0.05        // per minute
 };
 
-function createToast(message) {
-    let container = document.querySelector('.toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-
-    const toastEl = document.createElement('div');
-    toastEl.className = 'toast';
-    toastEl.innerText = message;
-    container.appendChild(toastEl);
-
-    setTimeout(() => {
-        toastEl.style.opacity = '0';
-        toastEl.style.transform = 'translateY(-10px)';
-        setTimeout(() => toastEl.remove(), 250);
-    }, 2000);
-}
-
-function shootConfetti() {
-    for (let i = 0; i < 25; i++) {
-        const c = document.createElement('div');
-        c.className = 'confetti';
-        const startX = window.innerWidth * Math.random();
-        const startY = -20;
-        c.style.left = `${startX}px`;
-        c.style.top = `${startY}px`;
-        c.style.transform = `rotate(${Math.random() * 360}deg)`;
-        document.body.appendChild(c);
-
-        const endX = startX + (Math.random() * 200 - 100);
-        const endY = window.innerHeight + 50;
-        const duration = 1000 + Math.random() * 800;
-
-        c.animate([
-            { transform: `translate(0, 0) rotate(${Math.random()*360}deg)`, opacity: 1 },
-            { transform: `translate(${endX - startX}px, ${endY - startY}px) rotate(${Math.random()*720}deg)`, opacity: 0 }
-        ], { duration, easing: 'ease-out' });
-
-        setTimeout(() => c.remove(), duration);
-    }
-}
-
-function launchCelebration(score) {
-    if (score >= 90) {
-        createToast('🎉 Awesome! You are an Eco Hero!');
-        shootConfetti();
-    } else if (score >= 75) {
-        createToast('✅ Great work! Keep pushing your green score higher.');
-    } else if (score >= 50) {
-        createToast('🌿 Good progress—your habits are improving.');
-    }
-}
-
 function generateRoadmap(breakdown, totalEmission) {
     const roadmapEl = document.getElementById('roadmap');
     if (!roadmapEl) return;
@@ -156,8 +101,24 @@ function displayResults(prefix, totalEmission, score, level, breakdown, yearly) 
     const breakdownEl = document.getElementById(target.breakdown);
 
     if (resultEl) resultEl.innerText = `Total Emission: ${totalEmission.toFixed(2)} kg CO2`;
-    if (scoreEl) scoreEl.innerText = `Green Score: ${score.toFixed(0)}`;
-    if (levelEl) levelEl.innerText = `Level: ${level}`;
+    if (scoreEl) {
+        scoreEl.classList.add('score-badge');
+        scoreEl.classList.remove('score-good', 'score-mid', 'score-low', 'score-neutral');
+
+        if (totalEmission < 1) {
+            scoreEl.innerText = 'Green Score: N/A';
+            scoreEl.classList.add('score-neutral');
+            if (levelEl) levelEl.innerText = 'Level: N/A';
+        } else {
+            scoreEl.innerText = `Green Score: ${score.toFixed(0)}`;
+            if (score >= 80) scoreEl.classList.add('score-good');
+            else if (score >= 50) scoreEl.classList.add('score-mid');
+            else scoreEl.classList.add('score-low');
+            if (levelEl) levelEl.innerText = `Level: ${level}`;
+        }
+    } else if (levelEl) {
+        levelEl.innerText = `Level: ${level}`;
+    }
     if (yearlyEl) yearlyEl.innerText = `Estimated Yearly Emission: ${yearly.toFixed(2)} kg CO2`;
     if (breakdownEl) breakdownEl.innerText =
         `⚡ Energy: ${breakdown.energy.toFixed(2)} kg CO2\n` +
@@ -169,10 +130,13 @@ function displayResults(prefix, totalEmission, score, level, breakdown, yearly) 
     // New additional quick summary below water category
     const quickResult = document.getElementById('quickResult');
     if (quickResult) {
+        const displayScore = totalEmission < 1 ? 'N/A' : score.toFixed(0);
+        const displayLevel = totalEmission < 1 ? 'N/A' : level;
+
         quickResult.innerHTML = `
             <strong>Total Emission:</strong> ${totalEmission.toFixed(2)} kg CO2<br>
-            <strong>Green Score:</strong> ${score.toFixed(0)}<br>
-            <strong>Level:</strong> ${level}<br>
+            <strong>Green Score:</strong> ${displayScore}<br>
+            <strong>Level:</strong> ${displayLevel}<br>
             <strong>Energy:</strong> ${breakdown.energy.toFixed(2)} kg CO2<br>
             <strong>Transport:</strong> ${breakdown.transport.toFixed(2)} kg CO2<br>
             <strong>Food:</strong> ${breakdown.food.toFixed(2)} kg CO2<br>
@@ -180,7 +144,16 @@ function displayResults(prefix, totalEmission, score, level, breakdown, yearly) 
             <strong>Water:</strong> ${breakdown.water.toFixed(2)} kg CO2
         `;
     }
+
+    ['result','score','level','yearly','breakdown','simResult','simScore','simLevel','simBreakdown'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.add('pulse');
+            setTimeout(() => el.classList.remove('pulse'), 450);
+        }
+    });
 }
+
 
 function calculateEmissionFromValues(values) {
     const b = {};
