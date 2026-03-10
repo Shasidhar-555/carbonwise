@@ -2,9 +2,13 @@
 protectPage("user");
 
 function loadProfile(){
-    let username = localStorage.getItem("username") || "Guest";
-    let email = localStorage.getItem("email") || "user@example.com";
-    let role = localStorage.getItem("role") || "User";
+    let loggedInUser = localStorage.getItem("loggedInUser") || "Guest";
+    let usersDb = JSON.parse(localStorage.getItem("users")) || {};
+    let currentUser = usersDb[loggedInUser] || {};
+
+    let username = loggedInUser;
+    let email = currentUser.email || "user@example.com";
+    let role = currentUser.role || "User";
 
     let history = JSON.parse(localStorage.getItem("history")) || [];
     let lastEntry = history[history.length - 1] || {};
@@ -28,6 +32,8 @@ function loadProfile(){
     document.getElementById("username").innerText = "Username: " + username;
     document.getElementById("email").innerText = "Email: " + email;
     document.getElementById("role").innerText = "Role: " + role;
+    document.getElementById("fullname").innerText = `Full Name: ${currentUser.profile?.fullName || '—'}`;
+    document.getElementById("country").innerText = `Country: ${currentUser.profile?.country || '—'}`;
 
     document.getElementById("latestEmission").innerText = `Latest Carbon Emission: ${latestEmission.toFixed(2)} kg CO2`;
     document.getElementById("currentGreenScore").innerText = `Current Green Score: ${latestScore.toFixed(0)}`;
@@ -52,7 +58,7 @@ function loadProfile(){
     }
 
     document.getElementById("editProfileBtn").addEventListener("click", () => {
-        window.location.href = "edit-profile.html";
+        window.location.href = "setup-profile.html";
     });
     document.getElementById("changePasswordBtn").addEventListener("click", () => {
         alert("Change password function is not implemented yet.");

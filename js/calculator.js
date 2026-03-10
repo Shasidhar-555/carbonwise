@@ -57,15 +57,32 @@ function calculateCarbon(){
     // Green Score
     let score = Math.max(0, 100 - totalEmission);
 
-    // Save history
+    // Save history (include username for admin analytics)
     let history = JSON.parse(localStorage.getItem("history")) || [];
     let now = new Date();
+    let currentUser = localStorage.getItem("loggedInUser") || "Guest";
     history.push({
         date: now.toLocaleDateString(),
+        user: currentUser,
         emission: totalEmission,
         total: totalEmission,
         score: score,
-        breakdown: b
+        breakdown: b,
+        inputs: {
+            electricity, ac, gasYear,
+            car: Number(document.getElementById("car").value) || 0,
+            bus: Number(document.getElementById("bus").value) || 0,
+            train: Number(document.getElementById("train").value) || 0,
+            plane: Number(document.getElementById("plane").value) || 0,
+            bike: Number(document.getElementById("bike").value) || 0,
+            meat: Number(document.getElementById("meat").value) || 0,
+            dairy: Number(document.getElementById("dairy").value) || 0,
+            veg: Number(document.getElementById("veg").value) || 0,
+            waste: Number(document.getElementById("waste").value) || 0,
+            water: Number(document.getElementById("water").value) || 0,
+            laundry: Number(document.getElementById("laundry").value) || 0,
+            shower: Number(document.getElementById("shower").value) || 0
+        }
     });
     localStorage.setItem("history", JSON.stringify(history));
     localStorage.setItem("totalEmission", totalEmission);

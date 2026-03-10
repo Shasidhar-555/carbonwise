@@ -1,80 +1,92 @@
 // Protect admin page
 protectPage("admin");
 
-// Sample users stored locally (replace with real DB in future)
-let users = JSON.parse(localStorage.getItem("users")) || [
-    {name:"Alex", score:92},
-    {name:"Jordan", score:85},
-    {name:"You", score:0} // placeholder
-];
+// Protect data
+let usersData = JSON.parse(localStorage.getItem("users")) || {};
+let users = Object.keys(usersData).map(key => ({name: key, role: usersData[key].role || 'user'}));
 
-// Compute current user score if logged in
-let username = localStorage.getItem("username");
-if(username){
-    let totalEmission = Number(localStorage.getItem("totalEmission")) || 0;
-    let userScore = Math.max(0, 100 - totalEmission);
-
-    // Update user if exists, else push new
-    let existing = users.find(u => u.name === username);
-    if(existing){
-        existing.score = userScore;
-    } else {
-        users.push({name: username, score: userScore});
-    }
+// Ensure admin user info appears if login session exists
+let loggedInUser = localStorage.getItem("loggedInUser");
+let loggedInRole = localStorage.getItem("loggedInRole");
+if(loggedInUser && !users.some(u => u.name === loggedInUser)){
+    users.push({name: loggedInUser, role: loggedInRole || 'user'});
 }
 
-// Sort descending by score
-users.sort((a,b) => b.score - a.score);
+// History entries
+let history = JSON.parse(localStorage.getItem("history")) || [];
 
-// Populate leaderboard
-let leaderboardTable = document.querySelector("#adminLeaderboard tbody");
-leaderboardTable.innerHTML = "";
-users.forEach((u, idx) => {
-    let medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : "";
-    let row = `
-        <tr>
-            <td>${medal}</td>
-            <td>${u.name}</td>
-            <td>${u.score}</td>
-        </tr>
-    `;
-    leaderboardTable.innerHTML += row;
+// Compute emission + green score per user from historical data
+let perUserStats = {};
+history.forEach(entry => {
+    let user = entry.user || 'Guest';
+    if(!perUserStats[user]){
+        perUserStats[user] = {emissions: [], breakdowns: [], goals: [], scores: []};
+    }
+    perUserStats[user].emissions.push(entry.emission || entry.total || 0);
+    perUserStats[user].breakdowns.push(entry.breakdown || {});
+    if(entry.score !== undefined) perUserStats[user].scores.push(entry.score);
 });
 
-// Total users & average emission
+// Build leaderboard with latest scores
+let leaderboardEntries = Object.entries(perUserStats).map(([user, stats]) => {
+    let score = stats.scores.length ? stats.scores[stats.scores.length - 1] : 0;
+    return {name: user, score};
+});
+if(leaderboardEntries.length === 0 && users.length > 0){
+    leaderboardEntries = users.map(u => ({name: u.name, score: 0}));
+}
+leaderboardEntries.sort((a,b) => b.score - a.score);
+
+// Populate admin leaderboard
+document.querySelector("#adminLeaderboard tbody").innerHTML = leaderboardEntries.map((u, idx) => {
+    let medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : "";
+    return `<tr><td>${medal}</td><td>${u.name}</td><td>${u.score.toFixed ? u.score.toFixed(0) : u.score}</td></tr>`;
+}).join('');
+
+// Total registered users
 document.getElementById("totalUsers").innerText = users.length;
-let avgEmission = users.reduce((sum,u) => sum + (100-u.score),0)/users.length;
-document.getElementById("averageEmission").innerText = avgEmission.toFixed(2) + " kg CO2";
 
-// Charts
+// Average emission across all entries
+let averageEmission = 0;
+if(history.length > 0){
+    averageEmission = history.reduce((sum, entry) => sum + Number(entry.emission || entry.total || 0), 0) / history.length;
+}
+document.getElementById("averageEmission").innerText = averageEmission.toFixed(2) + " kg CO2";
+
+// Category breakdown aggregated
+let aggregated = {energy:0, transport:0, food:0, waste:0, water:0};
+history.forEach(entry => {
+    if(entry.breakdown){
+        aggregated.energy += Number(entry.breakdown.energy || 0);
+        aggregated.transport += Number(entry.breakdown.transport || 0);
+        aggregated.food += Number(entry.breakdown.food || 0);
+        aggregated.waste += Number(entry.breakdown.waste || 0);
+        aggregated.water += Number(entry.breakdown.water || 0);
+    }
+});
+
+// Category doughnut chart
 let categoryCtx = document.getElementById("categoryChart").getContext("2d");
-let trendCtx = document.getElementById("trendChart").getContext("2d");
-
-// Sample category breakdown (replace with real data)
-let lastBreakdown = JSON.parse(localStorage.getItem("latestBreakdown")) || {
-    energy: 20, transport: 15, food: 10, waste: 5, water: 8
-};
-
 new Chart(categoryCtx, {
     type: 'doughnut',
     data: {
         labels: ["Energy","Transport","Food","Waste","Water"],
         datasets: [{
-            data: [lastBreakdown.energy,lastBreakdown.transport,lastBreakdown.food,lastBreakdown.waste,lastBreakdown.water],
+            data: [aggregated.energy,aggregated.transport,aggregated.food,aggregated.waste,aggregated.water],
             backgroundColor: ['#00ffff','#ffa500','#00ccff','#ff6666','#ccff00']
         }]
     }
 });
 
 // Trend chart from history
-let history = JSON.parse(localStorage.getItem("history")) || [];
+let trendCtx = document.getElementById("trendChart").getContext("2d");
 new Chart(trendCtx, {
     type: 'line',
     data: {
         labels: history.map(h => h.date),
         datasets: [{
             label: "CO2 Emission",
-            data: history.map(h => h.emission),
+            data: history.map(h => h.emission || h.total || 0),
             backgroundColor: '#00ffff40',
             borderColor: '#00ffff',
             fill: true,
@@ -82,3 +94,24 @@ new Chart(trendCtx, {
         }]
     }
 });
+
+// All submissions table
+const submissionBody = document.querySelector('#submissionTable tbody');
+if(history.length > 0){
+    submissionBody.innerHTML = history.map(entry => {
+        let b = entry.breakdown || {};
+        return `<tr>
+            <td>${entry.date || 'N/A'}</td>
+            <td>${entry.user || 'Guest'}</td>
+            <td>${(entry.emission || entry.total || 0).toFixed(2)}</td>
+            <td>${entry.score !== undefined ? entry.score.toFixed(0) : '--'}</td>
+            <td>${(b.energy || 0).toFixed(2)}</td>
+            <td>${(b.transport || 0).toFixed(2)}</td>
+            <td>${(b.food || 0).toFixed(2)}</td>
+            <td>${(b.waste || 0).toFixed(2)}</td>
+            <td>${(b.water || 0).toFixed(2)}</td>
+        </tr>`;
+    }).join('');
+} else {
+    submissionBody.innerHTML = `<tr><td colspan="9" style="text-align:center;">No submissions yet.</td></tr>`;
+}

@@ -11,11 +11,12 @@ function hashPassword(password) {
 // Register function (store in localStorage)
 function register() {
     let username = document.getElementById("username").value.trim();
+    let email = document.getElementById("email").value.trim();
     let password = document.getElementById("password").value;
     let role = document.getElementById("role").value;
 
-    if(!username || !password){
-        document.getElementById("loginMessage").innerText = "Please enter username and password.";
+    if(!username || !email || !password){
+        document.getElementById("loginMessage").innerText = "Please enter username, email and password.";
         return;
     }
 
@@ -27,8 +28,15 @@ function register() {
     }
 
     users[username] = {
+        email: email,
         password: hashPassword(password),
-        role: role
+        role: role,
+        profileComplete: false,
+        profile: {
+            fullName: "",
+            country: "",
+            lifestyle: ""
+        }
     };
 
     localStorage.setItem("users", JSON.stringify(users));
@@ -38,8 +46,14 @@ function register() {
 // Login function
 function login() {
     let username = document.getElementById("username").value.trim();
+    let email = document.getElementById("email").value.trim();
     let password = document.getElementById("password").value;
     let role = document.getElementById("role").value;
+
+    if(!username || !email || !password){
+        document.getElementById("loginMessage").innerText = "Username, email, and password are required.";
+        return;
+    }
 
     let users = JSON.parse(localStorage.getItem("users")) || {};
 
@@ -53,16 +67,23 @@ function login() {
         return;
     }
 
-    // Save session info
+    // Admin hardcoded credentials
+    if(username === "12345" && password === "12345" && role === "admin"){
+        localStorage.setItem("loggedInUser", "admin");
+        localStorage.setItem("loggedInRole", "admin");
+        window.location.href = "admin.html";
+        return;
+    }
+
     localStorage.setItem("loggedInUser", username);
     localStorage.setItem("loggedInRole", role);
 
-    // Redirect based on role
-    if(role === "admin"){
-        window.location.href = "admin.html";
-    } else {
-        window.location.href = "dashboard.html";
-    }
+    // Optional: keep username/email globally
+    localStorage.setItem("username", username);
+    localStorage.setItem("email", email);
+
+    // Always redirect to setup profile before dashboard
+    window.location.href = "setup-profile.html";
 }
 
 // Page protection function (call at top of restricted pages)
@@ -73,6 +94,18 @@ function protectPage(roleRequired){
     if(!loggedInUser || (roleRequired && loggedInRole !== roleRequired)){
         alert("You must be logged in with proper access!");
         window.location.href = "login.html";
+        return;
+    }
+
+    if(roleRequired === "user"){
+        let users = JSON.parse(localStorage.getItem("users")) || {};
+        let currentUser = users[loggedInUser];
+        if(!currentUser || currentUser.profileComplete !== true){
+            if(!window.location.pathname.includes("setup-profile.html")){
+                window.location.href = "setup-profile.html";
+            }
+            return;
+        }
     }
 }
 
