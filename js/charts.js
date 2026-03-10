@@ -35,15 +35,26 @@ if(userGoal > 0){
 
 // Carbon Impact Insights
 const yearlyFootprint = monthlyEmissionValue * 12;
-const treesEstimated = yearlyFootprint > 0 ? Math.ceil(yearlyFootprint / 22) : 0; // ~22 kg CO2/year per mature tree
+const treesEstimated = yearlyFootprint > 0 ? Math.ceil(yearlyFootprint / 21) : 0; // ~21 kg CO2/year per mature tree
 const globalAvgYearly = 4700; // kg CO2 per year average
 
-document.getElementById("treesOffset").innerText = `Equivalent trees needed per year: ${treesEstimated}`;
-document.getElementById("yearlyFootprint").innerText = `Estimated yearly footprint: ${yearlyFootprint.toFixed(2)} kg CO2`;
+document.getElementById("yearlyFootprint").innerText = `Yearly Emission: ${yearlyFootprint.toFixed(2)} kg CO2`;
+document.getElementById("treesOffset").innerText = `Trees Required to Offset: ${treesEstimated} Trees 🌳`;
+
+let sustainabilityMessage = "Great job! Keep reducing your emissions.";
+if(yearlyFootprint > 5000){
+    sustainabilityMessage = "Your emissions are high; consider aggressive reduction strategies (solar, EV, plant-based diet).";
+} else if(yearlyFootprint > 2000){
+    sustainabilityMessage = "Moderate emissions; focus on efficiency and lifestyle tweaks for improvement.";
+} else if(yearlyFootprint > 0){
+    sustainabilityMessage = "Excellent progress; maintain your sustainable habits.";
+}
 
 document.getElementById("globalAverage").innerText = yearlyFootprint > 0 ?
     `Compared to global average: ${(yearlyFootprint / globalAvgYearly).toFixed(2)}x` :
     `Compared to global average: 0.00x`;
+
+document.getElementById("sustainabilityMessage").innerText = sustainabilityMessage;
 
 // Recent activity
 const recentTable = document.getElementById("recentActivity").querySelector("tbody");

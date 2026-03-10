@@ -46,24 +46,54 @@ document.querySelector("#adminLeaderboard tbody").innerHTML = leaderboardEntries
 // Total registered users
 document.getElementById("totalUsers").innerText = users.length;
 
+// Total CO2 tracked
+let totalCO2 = history.reduce((sum, entry) => sum + Number(entry.emission || entry.total || 0), 0);
+document.getElementById("totalCO2").innerText = totalCO2.toFixed(2) + " kg CO2";
+
 // Average emission across all entries
 let averageEmission = 0;
 if(history.length > 0){
-    averageEmission = history.reduce((sum, entry) => sum + Number(entry.emission || entry.total || 0), 0) / history.length;
+    averageEmission = totalCO2 / history.length;
 }
 document.getElementById("averageEmission").innerText = averageEmission.toFixed(2) + " kg CO2";
 
-// Category breakdown aggregated
-let aggregated = {energy:0, transport:0, food:0, waste:0, water:0};
+// Trees required to offset tracking
+let totalTrees = Math.ceil(totalCO2 / 21);
+document.getElementById("totalTrees").innerText = `${totalTrees} Trees 🌳`;
+
+// Highest green score
+let highestScore = leaderboardEntries.length ? Math.max(...leaderboardEntries.map(u => Number(u.score || 0))) : 0;
+document.getElementById("highestGreenScore").innerText = highestScore.toFixed(0);
+
+// Most polluting category
+let categoryTotals = {energy:0, transport:0, food:0, waste:0, water:0};
 history.forEach(entry => {
     if(entry.breakdown){
-        aggregated.energy += Number(entry.breakdown.energy || 0);
-        aggregated.transport += Number(entry.breakdown.transport || 0);
-        aggregated.food += Number(entry.breakdown.food || 0);
-        aggregated.waste += Number(entry.breakdown.waste || 0);
-        aggregated.water += Number(entry.breakdown.water || 0);
+        categoryTotals.energy += Number(entry.breakdown.energy || 0);
+        categoryTotals.transport += Number(entry.breakdown.transport || 0);
+        categoryTotals.food += Number(entry.breakdown.food || 0);
+        categoryTotals.waste += Number(entry.breakdown.waste || 0);
+        categoryTotals.water += Number(entry.breakdown.water || 0);
     }
 });
+let topCategory = "N/A";
+let topValue = 0;
+for(let key in categoryTotals){
+    if(categoryTotals[key] > topValue){
+        topValue = categoryTotals[key];
+        topCategory = key.charAt(0).toUpperCase() + key.slice(1);
+    }
+}
+document.getElementById("topCategory").innerText = topCategory;
+
+// Category average chart data (for system-level insight)
+let categoryAvgData = [
+    (categoryTotals.energy / (users.length || 1)).toFixed(2),
+    (categoryTotals.transport / (users.length || 1)).toFixed(2),
+    (categoryTotals.food / (users.length || 1)).toFixed(2),
+    (categoryTotals.waste / (users.length || 1)).toFixed(2),
+    (categoryTotals.water / (users.length || 1)).toFixed(2)
+];
 
 // Category doughnut chart
 let categoryCtx = document.getElementById("categoryChart").getContext("2d");
@@ -72,9 +102,31 @@ new Chart(categoryCtx, {
     data: {
         labels: ["Energy","Transport","Food","Waste","Water"],
         datasets: [{
-            data: [aggregated.energy,aggregated.transport,aggregated.food,aggregated.waste,aggregated.water],
+            data: categoryAvgData,
             backgroundColor: ['#00ffff','#ffa500','#00ccff','#ff6666','#ccff00']
         }]
+    }
+});
+
+// Average emission by category (bar chart)
+let avgCategoryCtx = document.getElementById("avgCategoryChart").getContext("2d");
+new Chart(avgCategoryCtx, {
+    type: 'bar',
+    data: {
+        labels: ["Energy","Transport","Food","Waste","Water"],
+        datasets: [{
+            label: 'Avg kg CO2',
+            data: categoryAvgData,
+            backgroundColor: ['#00ffff','#ffa500','#00ccff','#ff6666','#ccff00']
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: { beginAtZero: true, ticks: { color: '#00ffff' }, grid: { color: '#11141c' } },
+            x: { ticks: { color: '#00ffff' }, grid: { color: '#11141c' } }
+        },
+        plugins: { legend: { labels: { color: '#00ffff' } } }
     }
 });
 
@@ -114,4 +166,48 @@ if(history.length > 0){
     }).join('');
 } else {
     submissionBody.innerHTML = `<tr><td colspan="9" style="text-align:center;">No submissions yet.</td></tr>`;
+}
+
+// Admin control buttons
+const viewUserDataBtn = document.getElementById('viewUserData');
+const exportReportBtn = document.getElementById('exportReport');
+const resetDataBtn = document.getElementById('resetData');
+const viewLogsBtn = document.getElementById('viewLogs');
+
+if(viewUserDataBtn){
+    viewUserDataBtn.addEventListener('click', () => {
+        document.getElementById('emissionData').scrollIntoView({behavior:'smooth'});
+    });
+}
+
+if(exportReportBtn){
+    exportReportBtn.addEventListener('click', () => {
+        let csv = 'date,user,emission,score,energy,transport,food,waste,water\n';
+        history.forEach(e => {
+            let b = e.breakdown || {};
+            csv += `${e.date || ''},${e.user || ''},${(e.emission||e.total||0).toFixed(2)},${(e.score||'')},${(b.energy||0)},${(b.transport||0)},${(b.food||0)},${(b.waste||0)},${(b.water||0)}\n`;
+        });
+        let blob = new Blob([csv], { type: 'text/csv' });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = 'emission_report.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+}
+
+if(resetDataBtn){
+    resetDataBtn.addEventListener('click', () => {
+        if(confirm('Reset all user data and emission history? This cannot be undone.')){
+            localStorage.removeItem('history');
+            location.reload();
+        }
+    });
+}
+
+if(viewLogsBtn){
+    viewLogsBtn.addEventListener('click', () => {
+        alert('System logs not implemented yet.');
+    });
 }

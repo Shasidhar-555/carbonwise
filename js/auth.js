@@ -91,7 +91,18 @@ function protectPage(roleRequired){
     let loggedInUser = localStorage.getItem("loggedInUser");
     let loggedInRole = localStorage.getItem("loggedInRole");
 
-    if(!loggedInUser || (roleRequired && loggedInRole !== roleRequired)){
+    if(!loggedInUser){
+        alert("You must be logged in with proper access!");
+        window.location.href = "login.html";
+        return;
+    }
+
+    if(roleRequired && loggedInRole !== roleRequired){
+        if(roleRequired === "admin"){
+            alert("Admin access only.");
+            window.location.href = "dashboard.html";
+            return;
+        }
         alert("You must be logged in with proper access!");
         window.location.href = "login.html";
         return;

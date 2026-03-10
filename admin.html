@@ -12,20 +12,20 @@
 
   <!-- NAVBAR -->
   <header class="navbar">
-    <h2>CarbonWise Admin Panel</h2>
+    <h2>CarbonWise Admin Control Panel</h2>
     <nav>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="calculator.html">Calculator</a>
-      <a href="history.html">History</a>
-      <a href="goals.html">Goals</a>
-      <a href="profile.html">Profile</a>
+      <a href="admin.html">Admin Dashboard</a>
+      <a href="#userManagement">User Management</a>
+      <a href="#systemAnalytics">System Analytics</a>
+      <a href="#emissionData">Emission Data</a>
+      <a href="#reports">Reports</a>
       <a href="#" onclick="logout()">Logout</a>
     </nav>
   </header>
 
-  <h1 class="center">📊 Admin Analytics</h1>
+  <h1 class="center">📊 Admin Control Center</h1>
 
-  <div class="container">
+  <div id="systemAnalytics" class="container">
 
     <div class="card">
       <h3>Total Users</h3>
@@ -36,6 +36,27 @@
       <h3>Average Emission</h3>
       <p id="averageEmission">0 kg CO2</p>
     </div>
+
+    <div class="card">
+      <h3>Highest Green Score</h3>
+      <p id="highestGreenScore">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Top Pollution Category</h3>
+      <p id="topCategory">N/A</p>
+    </div>
+
+    <div class="card">
+      <h3>Total CO2 Tracked</h3>
+      <p id="totalCO2">0 kg CO2</p>
+    </div>
+
+    <div class="card">
+      <h3>Trees Required to Offset</h3>
+      <p id="totalTrees">0 Trees 🌳</p>
+    </div>
+  </div>
 
     <div class="card">
       <h3>Leaderboard</h3>
@@ -52,8 +73,13 @@
     </div>
 
     <div class="card">
-      <h3>Category Breakdown</h3>
+      <h3>Category Emission Breakdown</h3>
       <canvas id="categoryChart" width="400" height="200"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Average Emission by Category</h3>
+      <canvas id="avgCategoryChart" width="400" height="200"></canvas>
     </div>
 
     <div class="card">
@@ -63,9 +89,15 @@
 
   </div>
 
-  <div class="container" style="margin-top:20px;">
+  <div class="container" id="emissionData" style="margin-top:20px;">
     <div class="card" style="width:100%;">
-      <h3>All User Submissions</h3>
+      <h3>Emission Data & User Table</h3>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <button id="viewUserData">View User Data</button>
+        <button id="exportReport">Export Emission Report</button>
+        <button id="resetData">Reset User Data</button>
+        <button id="viewLogs">View System Logs</button>
+      </div>
       <table id="submissionTable" style="width:100%;">
         <thead>
           <tr>

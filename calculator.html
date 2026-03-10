@@ -59,11 +59,45 @@
     </div>
 
     <!-- Water -->
-    <div class="card">
+    <div class="card square">
       <h2>💧 Water</h2>
       <input type="number" id="water" placeholder="Water (litres/day)" min="0">
       <input type="number" id="laundry" placeholder="Laundry loads/week" min="0">
       <input type="number" id="shower" placeholder="Shower duration (min/day)" min="0">
+    </div>
+
+    <!-- Calculated Emission Summary -->
+    <div class="card square" id="quickResults">
+      <h2>📊 Calculated Values</h2>
+      <p id="quickResult" style="white-space: pre-line;">Enter values and click Calculate or adjust simulator to see results here.</p>
+    </div>
+
+    <!-- Lifestyle Impact Simulator -->
+    <div class="card" id="lifestyleSimulator">
+      <h2>🔧 Lifestyle Impact Simulator</h2>
+      <p>Use sliders to explore how small changes affect your carbon footprint in real time.</p>
+
+      <label>Car travel (km/week): <span id="simCarValue">0</span></label>
+      <input type="range" id="simCar" min="0" max="500" step="1" value="0">
+
+      <label>Electricity (kWh/week): <span id="simElectricityValue">0</span></label>
+      <input type="range" id="simElectricity" min="0" max="1000" step="1" value="0">
+
+      <label>Meat meals/week: <span id="simMeatValue">0</span></label>
+      <input type="range" id="simMeat" min="0" max="28" step="1" value="0">
+
+      <label>AC usage hours/week: <span id="simAcValue">0</span></label>
+      <input type="range" id="simAc" min="0" max="168" step="1" value="0">
+
+      <label>Public transport km/week: <span id="simBusValue">0</span></label>
+      <input type="range" id="simBus" min="0" max="500" step="1" value="0">
+
+      <div class="sim-results">
+        <h3 id="simResult"></h3>
+        <h3 id="simScore"></h3>
+        <h3 id="simLevel"></h3>
+        <pre id="simBreakdown"></pre>
+      </div>
     </div>
 
     <!-- Buttons -->
@@ -85,6 +119,13 @@
       <div class="chart">
         <canvas id="emissionChart" width="300" height="300"></canvas>
       </div>
+    </div>
+
+    <!-- Carbon Reduction Roadmap -->
+    <div class="card" id="roadmap" style="background: #112; color: #dff; margin-top: 20px; padding: 15px;">
+      <h2>🛣 Carbon Reduction Roadmap</h2>
+      <p>Adjust numbers or sliders to update your personalized plan.</p>
+      <!-- JS fills roadmap details -->
     </div>
 
   </div>

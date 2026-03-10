@@ -121,6 +121,11 @@ h1, h2, h3 {
   text-align: left;
 }
 
+.card.square {
+  border: 2px solid #00ffff;
+  background-color: #0f1928;
+}
+
 .card h2, .card h3 {
   margin-bottom: 15px;
   color: #00ffff;
@@ -204,6 +209,67 @@ h1, h2, h3 {
 
 .chart {
   flex: 0 0 auto;
+}
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 255, 255, 0.3);
+  border-color: #00cccc;
+}
+
+.pulse {
+  animation: pulse 0.5s ease-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); background-color: rgba(0,255,255,0.08); }
+  50% { transform: scale(1.04); background-color: rgba(0,255,255,0.2); }
+  100% { transform: scale(1); background-color: transparent; }
+}
+
+.score-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; }
+.score-good { background: #1f7; color: #083; }
+.score-mid { background: #fd7; color: #5a3; }
+.score-low { background: #f97; color: #700; }
+
+.toast-container {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  background: rgba(15, 22, 36, 0.95);
+  color: #fff;
+  border: 1px solid #00ffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 255, 255, 0.4);
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: toastIn 0.25s forwards;
+}
+
+@keyframes toastIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.confetti {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(45deg, #00ffff, #4dd0e1);
+  opacity: 0.95;
+  z-index: 9998;
+  pointer-events: none;
 }
 
 /* ----------------------------
