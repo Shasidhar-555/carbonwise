@@ -23,14 +23,20 @@ if(latest){
 document.getElementById("monthlyEmission").innerText = `${monthlyEmissionValue.toFixed(2)} kg CO2`;
 
 const userGoal = Number(localStorage.getItem("carbonGoal")) || 0;
-if(userGoal > 0){
-    document.getElementById("goalText").innerText = `Goal: ${userGoal} kg CO2 / month`;
-    const goalProgress = Math.min((monthlyEmissionValue / userGoal) * 100, 100);
-    document.getElementById("goalProgress").value = goalProgress;
-    document.getElementById("goalProgress").textContent = `${goalProgress.toFixed(0)}%`;
+const goalTextEl = document.getElementById("goalText");
+const goalProgressEl = document.getElementById("goalProgress");
+if (goalTextEl && goalProgressEl) {
+    if(userGoal > 0){
+        goalTextEl.innerText = `Goal: ${userGoal} kg CO2 / month`;
+        const goalProgress = Math.min((monthlyEmissionValue / userGoal) * 100, 100);
+        goalProgressEl.value = goalProgress;
+        goalProgressEl.textContent = `${goalProgress.toFixed(0)}%`;
+    } else {
+        goalTextEl.innerText = "No monthly goal set in Goals page.";
+        goalProgressEl.value = 0;
+    }
 } else {
-    document.getElementById("goalText").innerText = "No monthly goal set in Goals page.";
-    document.getElementById("goalProgress").value = 0;
+    // No goal UI on no-goal dashboard mode
 }
 
 // Carbon Impact Insights
@@ -55,6 +61,33 @@ document.getElementById("globalAverage").innerText = yearlyFootprint > 0 ?
     `Compared to global average: 0.00x`;
 
 document.getElementById("sustainabilityMessage").innerText = sustainabilityMessage;
+
+// AI-based advice connected to user data
+const aiAdviceEl = document.getElementById("aiAdvice");
+if (aiAdviceEl) {
+    const source = latest && latest.breakdown ? latest.breakdown : { energy: 0, transport: 0, food: 0, waste: 0, water: 0 };
+    const ordered = Object.entries(source).sort((a, b) => b[1] - a[1]);
+    const adviceMap = {
+        energy: 'Reduce electricity usage and switch to LED/efficient appliances.',
+        transport: 'Prefer public transit, carpooling, biking, or walking for short trips.',
+        food: 'Reduce meat consumption and increase plant-based meals.',
+        waste: 'Recycle and compost, minimize single-use plastics.',
+        water: 'Conserve water, fix leaks, and install low-flow fixtures.'
+    };
+
+    let advice = [];
+    if (history.length > 0 && ordered[0][1] > 0) {
+        advice = ordered.slice(0, 4).map(([key]) => adviceMap[key] || 'Keep improving your sustainability habits.');
+    } else {
+        advice = [
+            'No usage data yet. Use the calculator to build your first records.',
+            'Track your weekly inputs for dynamic recommendations.',
+            'Complete entries in all categories for more accurate insights.',
+            'Return after entering values to update your dashboard.'
+        ];
+    }
+    aiAdviceEl.innerHTML = advice.map(item => `<li>${item}</li>`).join('');
+}
 
 // Recent activity
 const recentTable = document.getElementById("recentActivity").querySelector("tbody");

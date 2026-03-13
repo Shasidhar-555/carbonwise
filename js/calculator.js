@@ -24,69 +24,9 @@ const factors = {
 };
 
 function generateRoadmap(breakdown, totalEmission) {
-    const roadmapEl = document.getElementById('roadmap');
-    if (!roadmapEl) return;
-
-    if (totalEmission < 1) {
-        roadmapEl.innerHTML = '<h3>Carbon Reduction Roadmap</h3><p>Enter some values or move sliders to generate your personalized roadmap.</p>';
-        return;
-    }
-
-    const categories = [
-        { name: 'Energy', value: breakdown.energy },
-        { name: 'Transport', value: breakdown.transport },
-        { name: 'Food', value: breakdown.food },
-        { name: 'Waste', value: breakdown.waste },
-        { name: 'Water', value: breakdown.water }
-    ];
-    categories.sort((a, b) => b.value - a.value);
-
-    const top = categories[0];
-    const second = categories[1];
-
-    const reductionTarget = (totalEmission * 0.3).toFixed(2);
-
-    let steps = [];
-    if (top.name === 'Transport') {
-        steps = [
-            'Reduce car travel by using public transport twice a week.',
-            'Carpool, bike, or walk for short-distance trips.',
-            'Consider switching to a low-emission vehicle when possible.'
-        ];
-    } else if (top.name === 'Energy') {
-        steps = [
-            'Reduce AC usage by 1 hour per day and use natural ventilation when possible.',
-            'Switch to energy-efficient appliances and LED lighting.',
-            'Unplug idle devices and use smart power strips.'
-        ];
-    } else if (top.name === 'Food') {
-        steps = [
-            'Replace 3 meat meals per week with vegetarian meals.',
-            'Reduce dairy-heavy meals and choose plant-based alternatives.',
-            'Buy local, seasonal food and minimize food waste.'
-        ];
-    } else if (top.name === 'Waste') {
-        steps = [
-            'Start recycling plastic, glass and paper waste regularly.',
-            'Reduce single-use plastic usage and bring reusable bags/bottles.',
-            'Compost organic waste where possible.'
-        ];
-    } else if (top.name === 'Water') {
-        steps = [
-            'Cut shower time and install a low-flow showerhead.',
-            'Fix leaks and avoid letting taps run unnecessarily.',
-            'Reuse greywater for gardening and choose water-efficient appliances.'
-        ];
-    }
-
-    if (second && second.value > 0) {
-        const secondStep = `Also monitor ${second.name.toLowerCase()} and apply improvements there as well.`;
-        steps.push(secondStep);
-    }
-
-    steps.push('Continue regular tracking with CarbonWise to keep improving.');
-
-    roadmapEl.innerHTML = `<h3>Goal: Reduce emission by 30% (${reductionTarget} kg CO2)</h3><ol>${steps.map(step => `<li>${step}</li>`).join('')}</ol>`;
+    // Roadmap feature and goal text removed by user request.
+    // No dashboard roadmap content should be injected.
+    return;
 }
 
 function displayResults(prefix, totalEmission, score, level, breakdown, yearly) {
